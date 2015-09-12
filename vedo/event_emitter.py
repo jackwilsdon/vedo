@@ -36,6 +36,10 @@ class Event(object):
     def read_only(self):
         return self._read_only
 
+    @property
+    def monitor(self):
+        return self._monitor
+
     def _enforce_read_only(self):
         if self._read_only:
             raise RuntimeError('event is read only')
