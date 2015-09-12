@@ -60,8 +60,10 @@ class ConsoleDestination(Destination):
 
     def log(self, message):
         level = snake_case_to_camel_case(message.level.name)
+        name = message.name
 
         if self.colorize:
             level = get_level_color(message.level) + level + Style.RESET_ALL
+            name = get_string_color(name) + name + Style.RESET_ALL
 
-        print('[{0}] {1}'.format(level, str(message)))
+        print('[{0}] [{1}] {2}'.format(level, name, str(message)))
