@@ -17,12 +17,19 @@ LEVEL_COLORS = {
     Level.fatal: Fore.RED
 }
 
+STRING_COLORS = [Fore.RED, Fore.GREEN, Fore.YELLOW, Fore.BLUE, Fore.MAGENTA,
+                 Fore.CYAN, Fore.WHITE]
+
 
 def get_level_color(level):
     if level not in LEVEL_COLORS:
         return Fore.RESET
 
     return LEVEL_COLORS[level]
+
+
+def get_string_color(string):
+    return STRING_COLORS[hash(string) % len(STRING_COLORS)]
 
 
 def snake_case_to_camel_case(snake_case):
