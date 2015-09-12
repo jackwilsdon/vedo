@@ -58,7 +58,8 @@ def snake_case_to_camel_case(snake_case):
 
 
 class ConsoleDestination(Destination):
-    def __init__(self, level=DEFAULT_LEVEL, stderr_level=DEFAULT_STDERROR_LEVEL,
+    def __init__(self, level=DEFAULT_LEVEL,
+                 stderr_level=DEFAULT_STDERROR_LEVEL,
                  colorize=False):
         super(ConsoleDestination, self).__init__(level)
 
