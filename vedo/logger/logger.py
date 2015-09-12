@@ -78,7 +78,7 @@ class Logger(EventEmitter):
             if destination.should_log(message):
                 destination.log(message)
 
-        self.emit(message.level, {'message': message})
+        self.emit(message.level.name, {'message': message})
 
     def log(self, level, message, *args, **kwargs):
         return self.log_message(Message(self.name, level, message, *args,
