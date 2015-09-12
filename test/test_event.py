@@ -1,10 +1,10 @@
 from __future__ import absolute_import
 
-import unittest
+from unittest import TestCase
 
 from vedo.event_emitter import Event
 
-class EventTest(unittest.TestCase):
+class EventTest(TestCase):
     def test_properties_get(self):
         property_key = 'testing'
         property_value = True
