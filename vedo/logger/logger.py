@@ -16,11 +16,16 @@ DEFAULT_LEVEL = Level.info
 
 
 class Message(object):
-    def __init__(self, level, format, *args, **kwargs):
+    def __init__(self, name, level, format, *args, **kwargs):
+        self._name = name
         self._level = level
         self._format = format
         self._args = args
         self._kwargs = kwargs
+
+    @property
+    def name(self):
+        return self._name
 
     @property
     def level(self):
@@ -58,10 +63,15 @@ class Destination(object):
 
 
 class Logger(EventEmitter):
-    def __init__(self, *destinations):
+    def __init__(self, name, *destinations):
         super(Logger, self).__init__()
 
+        self._name = name
         self._destinations = destinations
+
+    @property
+    def name(self):
+        return self._name
 
     def log_message(self, message):
         for destination in self._destinations:
@@ -71,7 +81,8 @@ class Logger(EventEmitter):
         self.emit(message.level, {'message': message})
 
     def log(self, level, message, *args, **kwargs):
-        return self.log_message(Message(level, message, *args, **kwargs))
+        return self.log_message(Message(self.name, level, message, *args,
+                                        **kwargs))
 
     def __getattr__(self, name):
         if name in Level.__members__.keys():
