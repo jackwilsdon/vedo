@@ -22,6 +22,7 @@ STRING_COLORS = [Fore.RED, Fore.GREEN, Fore.YELLOW, Fore.BLUE, Fore.MAGENTA,
 
 DEFAULT_STDERROR_LEVEL = Level.warning
 
+
 def should_color(stderr=False):
     if stderr:
         return sys.stderr.isatty()
