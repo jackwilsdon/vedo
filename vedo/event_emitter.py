@@ -4,8 +4,8 @@ _DEFAULT = object()
 
 
 class Event(object):
-    def __init__(self, name, properties={}, cancellable=False,
-                 read_only=False, monitor=False):
+    def __init__(self, name, properties={}, cancellable=False, read_only=False,
+                 monitor=False):
         self._name = name
         self._properties = properties
         self._cancellable = cancellable
