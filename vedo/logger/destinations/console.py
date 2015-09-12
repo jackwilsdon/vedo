@@ -72,9 +72,8 @@ class ConsoleDestination(Destination):
     def colorize(self):
         return self._colorize
 
-    def log(self, message):
+    def log(self, name, message):
         level = snake_case_to_camel_case(message.level.name)
-        name = message.name
         using_stderr = message.level.value >= self.stderr_level.value
 
         if self.colorize and should_color(using_stderr):

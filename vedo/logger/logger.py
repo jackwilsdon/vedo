@@ -16,16 +16,11 @@ DEFAULT_LEVEL = Level.info
 
 
 class Message(object):
-    def __init__(self, name, level, format, *args, **kwargs):
-        self._name = name
+    def __init__(self, level, format, *args, **kwargs):
         self._level = level
         self._format = format
         self._args = args
         self._kwargs = kwargs
-
-    @property
-    def name(self):
-        return self._name
 
     @property
     def level(self):
@@ -55,10 +50,10 @@ class Destination(object):
     def level(self):
         return self._level
 
-    def should_log(self, message):
+    def should_log(self, name, message):
         return message.level.value >= self.level.value
 
-    def log(self, message):
+    def log(self, name, message):
         raise NotImplementedError('{0}.log'.format(self.__class__.__name__))
 
 
@@ -75,13 +70,13 @@ class Logger(EventEmitter):
 
     def log_message(self, message):
         for destination in self._destinations:
-            if destination.should_log(message):
-                destination.log(message)
+            if destination.should_log(self.name, message):
+                destination.log(self.name, message)
 
-        self.emit(message.level.name, {'message': message})
+        self.emit(message.level.name, {'name': self.name, 'message': message})
 
     def log(self, level, message, *args, **kwargs):
-        return self.log_message(Message(self.name, level, message, *args,
+        return self.log_message(Message(level, message, *args,
                                         **kwargs))
 
     def copy(self, name):
