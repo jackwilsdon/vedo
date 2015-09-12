@@ -76,8 +76,7 @@ class Logger(EventEmitter):
         self.emit(message.level.name, {'name': self.name, 'message': message})
 
     def log(self, level, format, *args, **kwargs):
-        return self.log_message(Message(level, format, *args,
-                                        **kwargs))
+        return self.log_message(Message(level, format, *args, **kwargs))
 
     def copy(self, name):
         return Logger(name, self._destinations)
