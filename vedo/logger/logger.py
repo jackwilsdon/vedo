@@ -84,6 +84,9 @@ class Logger(EventEmitter):
         return self.log_message(Message(self.name, level, message, *args,
                                         **kwargs))
 
+    def copy(self, name):
+        return Logger(name, self._destinations)
+
     def __getattr__(self, name):
         if name in Level.__members__.keys():
             level = Level.__members__[name]
