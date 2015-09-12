@@ -58,8 +58,7 @@ class Event(object):
         if not self.cancellable:
             raise RuntimeError('event is not cancellable')
 
-        if isinstance(cancelled, bool):
-            self._cancelled = cancelled
+        self._cancelled = cancelled
 
     def cancel(self):
         self.cancelled = True
