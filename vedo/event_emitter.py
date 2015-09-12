@@ -68,10 +68,12 @@ class Event(object):
         self.cancelled = True
 
     def make_read_only(self):
-        return Event(self._name, self._properties, True, self._monitor)
+        return Event(self._name, self._properties, self._cancellable, True,
+                     self._monitor)
 
     def make_monitor(self):
-        return Event(self._name, self._properties, self._read_only, True)
+        return Event(self._name, self._properties, self._cancellable,
+                     self._read_only, True)
 
     def __contains__(self, key):
         return key in self._properties
