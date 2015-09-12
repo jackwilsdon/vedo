@@ -4,6 +4,7 @@ from unittest import TestCase
 
 from vedo.event_emitter import Event
 
+
 class EventTest(TestCase):
     def test_properties_get(self):
         property_key = 'testing'
