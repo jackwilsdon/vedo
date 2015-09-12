@@ -79,9 +79,6 @@ class EventEmitter(object):
         self._monitors = {}
         self._listeners = {}
 
-    def emit(self, name, properties={}, read_only=False):
-        self.emit_event(Event(name, properties, read_only))
-
     def emit_event(self, event):
         if event.name in self._monitors:
             for monitor in self._monitors[event.name]:
@@ -90,6 +87,9 @@ class EventEmitter(object):
         if event.name in self._listeners:
             for listener in self._listeners[event.name]:
                 listener(event)
+
+    def emit(self, name, properties={}, read_only=False):
+        self.emit_event(Event(name, properties, read_only))
 
     def _check_func(self, func):
         argspec = inspect.getargspec(func)
