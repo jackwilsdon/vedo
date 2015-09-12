@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+from __future__ import absolute_import, print_function
 
 import sys
 
@@ -7,7 +7,7 @@ from colorama import Fore, Style
 
 from vedo.logger import Level, DEFAULT_LEVEL, Destination
 
-colorama.init(strip=not sys.stdout.isatty())
+colorama.init()
 
 LEVEL_COLORS = {
     Level.debug: Fore.MAGENTA,
@@ -19,6 +19,14 @@ LEVEL_COLORS = {
 
 STRING_COLORS = [Fore.RED, Fore.GREEN, Fore.YELLOW, Fore.BLUE, Fore.MAGENTA,
                  Fore.CYAN, Fore.WHITE]
+
+DEFAULT_STDERROR_LEVEL = Level.warning
+
+def should_color(stderr=False):
+    if stderr:
+        return sys.stderr.isatty()
+
+    return sys.stdout.isatty()
 
 
 def get_level_color(level):
@@ -49,10 +57,16 @@ def snake_case_to_camel_case(snake_case):
 
 
 class ConsoleDestination(Destination):
-    def __init__(self, level=DEFAULT_LEVEL, colorize=False):
+    def __init__(self, level=DEFAULT_LEVEL, stderr_level=DEFAULT_STDERROR_LEVEL,
+                 colorize=False):
         super(ConsoleDestination, self).__init__(level)
 
+        self._stderr_level = stderr_level
         self._colorize = colorize
+
+    @property
+    def stderr_level(self):
+        return self._stderr_level
 
     @property
     def colorize(self):
@@ -61,9 +75,16 @@ class ConsoleDestination(Destination):
     def log(self, message):
         level = snake_case_to_camel_case(message.level.name)
         name = message.name
+        using_stderr = message.level.value >= self.stderr_level.value
 
-        if self.colorize:
+        if self.colorize and should_color(using_stderr):
             level = get_level_color(message.level) + level + Style.RESET_ALL
             name = get_string_color(name) + name + Style.RESET_ALL
 
-        print('[{0}] [{1}] {2}'.format(level, name, str(message)))
+        if using_stderr:
+            print_file = sys.stderr
+        else:
+            print_file = sys.stdout
+
+        print('[{0}] [{1}] {2}'.format(level, name, str(message)),
+              file=print_file)
