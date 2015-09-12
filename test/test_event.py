@@ -5,12 +5,6 @@ import unittest
 from vedo.event_emitter import Event
 
 class EventTest(unittest.TestCase):
-    def test_name(self):
-        event_name = 'event name'
-        event = Event(event_name)
-
-        assert event.name == event_name
-
     def test_properties_get(self):
         property_key = 'testing'
         property_value = True
