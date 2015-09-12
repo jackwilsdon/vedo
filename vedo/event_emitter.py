@@ -89,7 +89,10 @@ class EventEmitter(object):
                 listener(event)
 
     def emit(self, name, properties={}, read_only=False):
-        return self.emit_event(Event(name, properties, read_only))
+        event = Event(name, properties, read_only)
+        self.emit_event(event)
+
+        return event
 
     def _check_func(self, func):
         argspec = inspect.getargspec(func)
