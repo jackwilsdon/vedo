@@ -43,18 +43,38 @@ class EventTest(unittest.TestCase):
         with self.assertRaises(KeyError):
             event.set(property_key, property_value)
 
-    def test_cancellable(self):
+    def test_cancellable_cancelled(self):
         event = Event('event name', cancellable=True)
 
         event.cancelled = True
 
         self.assertTrue(event.cancelled)
 
-    def test_not_cancellable(self):
+    def test_cancellable_cancel(self):
+        event = Event('event name', cancellable=True)
+
+        event.cancel()
+
+        self.assertTrue(event.cancelled)
+
+    def test_not_cancellable_cancelled(self):
         event = Event('event name', cancellable=False)
 
         with self.assertRaises(RuntimeError):
             event.cancelled = True
+
+    def test_not_cancellable_cancel(self):
+        event = Event('event name', cancellable=False)
+
+        with self.assertRaises(RuntimeError):
+            event.cancel()
+
+    def test_cancelled(self):
+        event = Event('event name', cancellable=True)
+
+        event.cancelled = True
+
+        self.assertTrue(event.cancelled)
 
     def test_cancel(self):
         event = Event('event name', cancellable=True)
@@ -73,6 +93,12 @@ class EventTest(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             event.set(property_key, new_property_value)
 
+    def test_read_only_cancelled(self):
+        event = Event('event name', read_only=True)
+
+        with self.assertRaises(RuntimeError):
+            event.cancelled = True
+
     def test_read_only_cancel(self):
         event = Event('event name', read_only=True)
 
@@ -88,6 +114,12 @@ class EventTest(unittest.TestCase):
 
         with self.assertRaises(RuntimeError):
             event.set(property_key, new_property_value)
+
+    def test_monitor_cancelled(self):
+        event = Event('event name', monitor=True)
+
+        with self.assertRaises(RuntimeError):
+            event.cancelled = True
 
     def test_monitor_cancel(self):
         event = Event('event name', monitor=True)
