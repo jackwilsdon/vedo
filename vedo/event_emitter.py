@@ -4,9 +4,11 @@ _DEFAULT = object()
 
 
 class Event(object):
-    def __init__(self, name, properties={}, read_only=False, monitor=False):
+    def __init__(self, name, properties={}, cancellable=False,
+                 read_only=False, monitor=False):
         self._name = name
         self._properties = properties
+        self._cancellable = cancellable
         self._read_only = read_only
         self._monitor = monitor
 
@@ -21,6 +23,10 @@ class Event(object):
             raise KeyError(key)
 
         return self._properties[key] if key in self else default
+
+    @property
+    def cancellable(self):
+        return self._cancellable
 
     @property
     def cancelled(self):
@@ -48,6 +54,9 @@ class Event(object):
     @cancelled.setter
     def cancelled(self, cancelled):
         self._enforce_read_only()
+
+        if not self.cancellable:
+            raise RuntimeError('event is not cancellable')
 
         if isinstance(cancelled, bool):
             self._cancelled = cancelled
