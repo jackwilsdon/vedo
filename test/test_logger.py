@@ -19,6 +19,42 @@ class ArrayDestination(Destination):
         self._messages.append({'name': name, 'message': message})
 
 
+class MessageTest(TestCase):
+    def test_level(self):
+        message_level = Level.debug
+        message = Message(message_level, 'hello!')
+
+        self.assertEqual(message.level, message_level)
+
+    def test_format(self):
+        message_format = 'hello!'
+        message = Message(Level.debug, message_format)
+
+        self.assertEqual(message.format, message_format)
+
+    def test_args(self):
+        message_args = ['a', 'b', 'c']
+        message = Message(Level.debug, 'hello!', *message_args)
+
+        self.assertEqual(message.args, message_args)
+
+    def test_kwargs(self):
+        message_kwargs = {'a': True}
+        message = Message(Level.debug, 'hello!', **message_kwargs)
+
+        self.assertEqual(message.kwargs, message_kwargs)
+
+    def test_str(self):
+        message_format = 'hello, {0}! how is {name}?'
+        message_args = ['world']
+        message_kwargs = {'name': 'Jack'}
+        message_str = message_format.format(*message_args, **message_kwargs)
+        message = Message(Level.debug, message_format, *message_args,
+                          **message_kwargs)
+
+        self.assertEqual(str(message), message_str)
+
+
 class LoggerTest(TestCase):
     def setUp(self):
         self.array_destination = ArrayDestination(Level.debug)
@@ -94,6 +130,12 @@ class LoggerTest(TestCase):
 
 
 class DestinationTest(TestCase):
+    def test_level(self):
+        level = Level.debug
+        destination = Destination(level)
+
+        self.assertEqual(destination.level, level)
+
     def test_should_log(self):
         level = Level.info
         below_level = Level.debug
@@ -109,3 +151,11 @@ class DestinationTest(TestCase):
         self.assertTrue(destination.should_log(self.__class__.__name__,
                                                Message(above_level,
                                                        message_format)))
+
+    def test_log(self):
+        level = Level.debug
+        destination = Destination(level)
+        message = Message(level, 'hello!')
+
+        with self.assertRaises(NotImplementedError):
+            destination.log('name', message)
