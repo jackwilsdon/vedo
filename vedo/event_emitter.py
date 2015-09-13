@@ -4,26 +4,17 @@ _DEFAULT = object()
 
 
 class Event(object):
-    def __init__(self, name, properties={}, cancellable=False, read_only=False,
-                 monitor=False):
+    def __init__(self, name, properties={}, *args, **kwargs):
         self._name = name
         self._properties = properties
-        self._cancellable = cancellable
-        self._read_only = read_only
-        self._monitor = monitor
-
-        self._cancelled = False
-
-    def _enforce_read_only(self):
-        if self._read_only:
-            raise RuntimeError('event is read only')
-
-        if self._monitor:
-            raise RuntimeError('event is monitor only')
 
     @property
     def name(self):
         return self._name
+
+    @property
+    def properties(self):
+        return self._properties
 
     def get(self, key, default=_DEFAULT):
         if key not in self and default == _DEFAULT:
@@ -32,51 +23,21 @@ class Event(object):
         return self._properties[key] if key in self else default
 
     def set(self, key, value):
-        self._enforce_read_only()
-
         if key not in self:
             raise KeyError(key)
 
         self._properties[key] = value
 
-    @property
-    def cancellable(self):
-        return self._cancellable
-
-    @property
-    def cancelled(self):
-        return self._cancelled
-
-    @cancelled.setter
-    def cancelled(self, cancelled):
-        self._enforce_read_only()
-
-        if not self.cancellable:
-            raise RuntimeError('event is not cancellable')
-
-        self._cancelled = cancelled
-
-    @property
-    def read_only(self):
-        return self._read_only
-
-    @property
-    def monitor(self):
-        return self._monitor
-
-    def cancel(self):
-        self.cancelled = True
-
-    def make_read_only(self):
-        return Event(self._name, self._properties, self._cancellable, True,
-                     self._monitor)
-
-    def make_monitor(self):
-        return Event(self._name, self._properties, self._cancellable,
-                     self._read_only, True)
-
     def __contains__(self, key):
         return key in self._properties
+
+
+class ReadOnlyEvent(Event):
+    def __init__(self, *args, **kwargs):
+        super(ReadOnlyEvent, self).__init__(*args, **kwargs)
+
+    def set(self, *args, **kwargs):
+        raise RuntimeError('event is read only')
 
 
 class EventEmitter(object):
@@ -115,15 +76,13 @@ class EventEmitter(object):
         listeners[name].append(func)
 
     def emit_event(self, event):
-        self._emit(self._monitors, event.make_monitor())
+        self._emit(self._monitors, ReadOnlyEvent(event.name, event.properties))
         self._emit(self._listeners, event)
 
         return event
 
-    def emit(self, name, properties={}, cancellable=False, read_only=False,
-             monitor=False):
-        return self.emit_event(Event(str(name), properties, cancellable,
-                                     read_only, monitor))
+    def emit(self, *args, **kwargs):
+        return self.emit_event(Event(*args, **kwargs))
 
     def monitor(self, name, *funcs):
         for func in funcs:
