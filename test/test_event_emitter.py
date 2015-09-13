@@ -93,13 +93,12 @@ class EventEmitterTest(TestCase):
 
         self.assertTrue(result.value)
 
-    def test_event_name_stringification(self):
+    def test_event_name_objects(self):
         event_name = object()
         result = FalseLockValueHolder()
 
-        self.event_emitter.on(str(event_name), lambda event: result.set(True))
-        self.event_emitter.on(event_name, lambda event: result.set(False))
+        self.event_emitter.on(event_name, lambda event: result.set(True))
 
-        self.event_emitter.emit(event_name)
+        self.event_emitter.emit(str(event_name))
 
         self.assertTrue(result.value)
