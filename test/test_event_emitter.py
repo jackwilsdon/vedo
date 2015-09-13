@@ -37,11 +37,11 @@ class EventEmitterTest(TestCase):
         event_name = 'test event'
         result = ResultHolder()
 
-        def check_monitor(event):
+        def _check_monitor(event):
             self.assertTrue(event.monitor)
             result.set(True)
 
-        self.event_emitter.monitor(event_name, check_monitor)
+        self.event_emitter.monitor(event_name, _check_monitor)
         self.event_emitter.emit(event_name)
 
         self.assertTrue(result.value)
