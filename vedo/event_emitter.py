@@ -102,10 +102,12 @@ class EventEmitter(object):
 
     def _check_func(self, func):
         argspec = inspect.getargspec(func)
+        argcount = len(argspec.args)
 
-        if len(argspec.args) != 1:
-            raise TypeError('func {0} must accept 1 argument'.format(
-                            func.__name__))
+        if argcount != 1 and (not hasattr(func, '__self__') or
+                              func.__self__ is None):
+            raise TypeError('func {0} must accept 1 argument, not {1}'.format(
+                            func.__name__, argcount))
 
     def monitor(self, name, *funcs):
         for func in funcs:
