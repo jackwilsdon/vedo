@@ -50,6 +50,10 @@ class Destination(object):
     def level(self):
         return self._level
 
+    @level.setter
+    def level(self, level):
+        self._level = level
+
     def should_log(self, name, message):
         return message.level.value >= self.level.value
 
