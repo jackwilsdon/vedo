@@ -107,8 +107,8 @@ class EventEmitter(object):
 
         if bound:
             if argcount != 2:
-                raise TypeError('func {0} must accept 2 arguments, not {1}'.format(
-                                func.__name__, argcount))
+                raise TypeError('func {0} must accept 2 arguments, not {1}'
+                                .format(func.__name__, argcount))
         elif argcount != 1:
             raise TypeError('func {0} must accept 1 argument, not {1}'.format(
                             func.__name__, argcount))
