@@ -19,7 +19,7 @@ class Message(object):
     def __init__(self, level, format, *args, **kwargs):
         self._level = level
         self._format = format
-        self._args = args
+        self._args = list(args)
         self._kwargs = kwargs
 
     @property
