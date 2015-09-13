@@ -14,6 +14,13 @@ class Event(object):
 
         self._cancelled = False
 
+    def _enforce_read_only(self):
+        if self._read_only:
+            raise RuntimeError('event is read only')
+
+        if self._monitor:
+            raise RuntimeError('event is monitor only')
+
     @property
     def name(self):
         return self._name
@@ -24,29 +31,6 @@ class Event(object):
 
         return self._properties[key] if key in self else default
 
-    @property
-    def cancellable(self):
-        return self._cancellable
-
-    @property
-    def cancelled(self):
-        return self._cancelled
-
-    @property
-    def read_only(self):
-        return self._read_only
-
-    @property
-    def monitor(self):
-        return self._monitor
-
-    def _enforce_read_only(self):
-        if self._read_only:
-            raise RuntimeError('event is read only')
-
-        if self._monitor:
-            raise RuntimeError('event is monitor only')
-
     def set(self, key, value):
         self._enforce_read_only()
 
@@ -54,6 +38,14 @@ class Event(object):
             raise KeyError(key)
 
         self._properties[key] = value
+
+    @property
+    def cancellable(self):
+        return self._cancellable
+
+    @property
+    def cancelled(self):
+        return self._cancelled
 
     @cancelled.setter
     def cancelled(self, cancelled):
@@ -63,6 +55,14 @@ class Event(object):
             raise RuntimeError('event is not cancellable')
 
         self._cancelled = cancelled
+
+    @property
+    def read_only(self):
+        return self._read_only
+
+    @property
+    def monitor(self):
+        return self._monitor
 
     def cancel(self):
         self.cancelled = True
@@ -84,24 +84,6 @@ class EventEmitter(object):
         self._monitors = {}
         self._listeners = {}
 
-    def _emit(self, listeners, event):
-        name = str(event.name)
-
-        if name in listeners:
-            for listener in listeners[name]:
-                listener(event)
-
-    def emit_event(self, event):
-        self._emit(self._monitors, event.make_monitor())
-        self._emit(self._listeners, event)
-
-        return event
-
-    def emit(self, name, properties={}, cancellable=False, read_only=False,
-             monitor=False):
-        return self.emit_event(Event(str(name), properties, cancellable,
-                                     read_only, monitor))
-
     def _check_func(self, func):
         argspec = inspect.getargspec(func)
         argcount = len(argspec.args)
@@ -115,6 +97,13 @@ class EventEmitter(object):
             raise TypeError('func {0} must accept 1 argument, not {1}'.format(
                             func.__name__, argcount))
 
+    def _emit(self, listeners, event):
+        name = str(event.name)
+
+        if name in listeners:
+            for listener in listeners[name]:
+                listener(event)
+
     def _listen(self, listeners, name, func):
         self._check_func(func)
 
@@ -124,6 +113,17 @@ class EventEmitter(object):
             listeners[name] = []
 
         listeners[name].append(func)
+
+    def emit_event(self, event):
+        self._emit(self._monitors, event.make_monitor())
+        self._emit(self._listeners, event)
+
+        return event
+
+    def emit(self, name, properties={}, cancellable=False, read_only=False,
+             monitor=False):
+        return self.emit_event(Event(str(name), properties, cancellable,
+                                     read_only, monitor))
 
     def monitor(self, name, *funcs):
         for func in funcs:
