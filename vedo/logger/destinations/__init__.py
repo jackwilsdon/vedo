@@ -1,5 +1,5 @@
 from __future__ import absolute_import
 
-from vedo.logger.destinations.console import ConsoleDestination
+from vedo.logger.destinations.console import DEFAULT_STDERROR_LEVEL, ConsoleDestination
 
-__all__ = ['ConsoleDestination']
+__all__ = ['DEFAULT_STDERROR_LEVEL', 'ConsoleDestination']
