@@ -40,13 +40,19 @@ class ValueHolder(object):
     def set(self, value):
         self.value = value
 
+
+class FalseLockValueHolder(ValueHolder):
+    def __init__(self, value=None):
+        super(FalseLockValueHolder, self).__init__(value, True, False)
+
+
 class EventEmitterTest(TestCase):
     def setUp(self):
         self.event_emitter = EventEmitter()
 
     def test_on(self):
         event_name = 'test event'
-        result = ValueHolder()
+        result = FalseLockValueHolder()
 
         self.event_emitter.on(event_name, lambda event: result.set(True))
         self.event_emitter.emit(event_name)
@@ -55,7 +61,7 @@ class EventEmitterTest(TestCase):
 
     def test_monitor(self):
         event_name = 'test event'
-        result = ValueHolder()
+        result = FalseLockValueHolder()
 
         def _check_monitor(event):
             self.assertTrue(event.monitor)
@@ -68,7 +74,7 @@ class EventEmitterTest(TestCase):
 
     def test_event_name_stringification(self):
         event_name = object()
-        result = ValueHolder()
+        result = FalseLockValueHolder()
 
         self.event_emitter.on(str(event_name), lambda event: result.set(True))
         self.event_emitter.on(event_name, lambda event: result.set(False))
