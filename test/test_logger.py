@@ -67,6 +67,31 @@ class LoggerTest(TestCase):
         self.assertEqual(self.latest_message['message'].level, message_level)
         self.assertEqual(self.latest_message['message'].format, message_format)
 
+    def test_log_level(self):
+        level = Level.info
+        below_level = Level.debug
+        above_level = Level.warning
+        message_format = 'hello!'
+        self.array_destination.level = level
+
+        self.logger.log(level, message_format)
+
+        self.assertEqual(len(self.messages), 1)
+        self.assertEqual(self.latest_message['name'], self.logger.name)
+        self.assertEqual(self.latest_message['message'].level, level)
+        self.assertEqual(self.latest_message['message'].format, message_format)
+
+        self.logger.log(below_level, message_format)
+
+        self.assertEqual(len(self.messages), 1)
+
+        self.logger.log(above_level, message_format)
+
+        self.assertEqual(len(self.messages), 2)
+        self.assertEqual(self.latest_message['name'], self.logger.name)
+        self.assertEqual(self.latest_message['message'].level, above_level)
+        self.assertEqual(self.latest_message['message'].format, message_format)
+
 
 class DestinationTest(TestCase):
     def test_should_log(self):
