@@ -80,6 +80,10 @@ class EventEmitterTest(TestCase):
         with self.assertRaises(TypeError):
             self.event_emitter.on(event_name, _too_many_args)
 
+        self.event_emitter.emit(event_name)
+
+        self.assertTrue(result.value)
+
     def test_monitor(self):
         event_name = 'test event'
         result = FalseLockValueHolder()
