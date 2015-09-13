@@ -84,6 +84,39 @@ class EventEmitterTest(TestCase):
 
         self.assertTrue(result.value)
 
+    def test_on_bound_func(self):
+        event_name = 'test event'
+        result = FalseLockValueHolder()
+
+        def _not_enough_args(self):
+            self.set(False)
+
+        def _correct_args(self, event):
+            self.set(True)
+
+        def _too_many_args(self, a, b, c):
+            self.set(False)
+
+        bound_not_enough_args = types.MethodType(_not_enough_args, result,
+                                                 FalseLockValueHolder)
+        bound_correct_args = types.MethodType(_correct_args, result,
+                                              FalseLockValueHolder)
+        bound_too_many_args = types.MethodType(_too_many_args, result,
+                                               FalseLockValueHolder)
+
+        with self.assertRaises(TypeError):
+            self.event_emitter.on(event_name, bound_not_enough_args)
+
+        self.event_emitter.on(event_name, bound_correct_args)
+
+        with self.assertRaises(TypeError):
+            self.event_emitter.on(event_name, bound_too_many_args)
+
+        self.event_emitter.emit(event_name)
+
+        self.assertTrue(result.value)
+
+
     def test_monitor(self):
         event_name = 'test event'
         result = FalseLockValueHolder()
