@@ -5,20 +5,32 @@ from unittest import TestCase
 from vedo.event_emitter import EventEmitter
 
 
-class ResultHolder(object):
-    def __init__(self, value=False):
+class ValueHolder(object):
+    def __init__(self, value=False, one_time=True):
         self._value = value
+        self._one_time = one_time
+
+        self._already_set = False
 
     @property
     def value(self):
         return self._value
 
+    @property
+    def one_time(self):
+        return self._one_time
+
+    @property
+    def already_set(self):
+        return self._already_set
+
     @value.setter
     def value(self, value):
-        self._value = value
+        if self.one_time and not self.already_set:
+            self._value = value
 
     def set(self, value):
-        self._value = value
+        self.value = value
 
 class EventEmitterTest(TestCase):
     def setUp(self):
@@ -26,7 +38,7 @@ class EventEmitterTest(TestCase):
 
     def test_on(self):
         event_name = 'test event'
-        result = ResultHolder()
+        result = ValueHolder()
 
         self.event_emitter.on(event_name, lambda event: result.set(True))
         self.event_emitter.emit(event_name)
@@ -35,7 +47,7 @@ class EventEmitterTest(TestCase):
 
     def test_monitor(self):
         event_name = 'test event'
-        result = ResultHolder()
+        result = ValueHolder()
 
         def _check_monitor(event):
             self.assertTrue(event.monitor)
@@ -48,7 +60,7 @@ class EventEmitterTest(TestCase):
 
     def test_event_name_stringification(self):
         event_name = object()
-        result = ResultHolder()
+        result = ValueHolder()
 
         self.event_emitter.on(str(event_name), lambda event: result.set(True))
         self.event_emitter.on(event_name, lambda event: result.set(False))
