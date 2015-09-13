@@ -42,7 +42,7 @@ class ValueHolder(object):
 
 
 class FalseLockValueHolder(ValueHolder):
-    def __init__(self, value=None):
+    def __init__(self, value=False):
         super(FalseLockValueHolder, self).__init__(value, True, False)
 
 
