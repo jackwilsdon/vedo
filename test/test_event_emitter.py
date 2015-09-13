@@ -82,7 +82,6 @@ class EventEmitterTest(TestCase):
 
         self.assertTrue(result.value)
 
-
     def test_monitor(self):
         event_name = 'test event'
         result = FalseLockValueContainer()
