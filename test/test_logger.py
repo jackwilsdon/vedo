@@ -103,6 +103,10 @@ class LoggerTest(TestCase):
         self.assertEqual(self.latest_message['message'].level, message_level)
         self.assertEqual(self.latest_message['message'].format, message_format)
 
+    def test_missing_attribute(self):
+        with self.assertRaises(AttributeError):
+            getattr(self.logger, 'invalid_attribute')
+
     def test_log_level(self):
         level = Level.info
         below_level = Level.debug
