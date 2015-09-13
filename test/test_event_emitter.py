@@ -6,12 +6,12 @@ from vedo.event_emitter import EventEmitter
 
 
 class ValueHolder(object):
-    def __init__(self, value=None, lock_on_value=False, lock_value=None):
+    def __init__(self, value=None, lock_on_value=False, lock_value=None,
+                 locked=False):
         self._value = value
         self._lock_on_value = lock_on_value
         self._lock_value = lock_value
-
-        self._locked = False
+        self._locked = locked
 
     @property
     def value(self):
