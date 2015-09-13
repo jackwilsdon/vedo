@@ -2,149 +2,89 @@ from __future__ import absolute_import
 
 from unittest import TestCase
 
-from vedo.event_emitter import Event
+from vedo.event_emitter import Event, ReadOnlyEvent
 
-class EventTest(TestCase):
+class BaseEventTest(TestCase):
+    DEFAULT_EVENT_NAME = 'default event name'
+
+    def setUp(self):
+        self.event_class = Event
+
+    @property
+    def event_class(self):
+        return self._event_class
+
+    @event_class.setter
+    def event_class(self, event_class):
+        self._event_class = event_class
+
+    def create_event(self, name=DEFAULT_EVENT_NAME, *args, **kwargs):
+        return self.event_class(name=name, *args, **kwargs)
+
+
+class EventTest(BaseEventTest):
     def test_name(self):
         event_name = 'event name'
-        event = Event(event_name)
+        event = self.create_event(event_name)
 
-        assert event.name == event_name
+        self.assertEqual(event.name, event_name)
 
-    def test_properties_get(self):
+    def test_get(self):
         property_key = 'testing'
         property_value = True
-        event = Event('event name', {property_key: property_value})
+        event = self.create_event(properties={property_key: property_value})
 
         self.assertEqual(event.get(property_key), property_value)
 
-    def test_properties_get_default(self):
+    def test_get_nonexistent(self):
         property_key = 'testing'
-        default_value = 'default value'
-        event = Event('event name')
-
-        self.assertEqual(event.get(property_key, default_value), default_value)
-
-    def test_properties_get_nonexistent(self):
-        property_key = 'testing'
-        event = Event('event name')
+        event = self.create_event()
 
         with self.assertRaises(KeyError):
             event.get(property_key)
 
-    def test_properties_set(self):
+    def test_get_default(self):
+        property_key = 'testing'
+        default_value = 'default value'
+        event = self.create_event()
+
+        self.assertEqual(event.get(property_key, default_value), default_value)
+
+    def test_set(self):
         property_key = 'testing'
         property_value = True
         new_property_value = False
-        event = Event('event name', {property_key: property_value})
+        event = self.create_event(properties={property_key: property_value})
 
         event.set(property_key, new_property_value)
         self.assertEqual(event.get(property_key), new_property_value)
 
-    def test_properties_set_nonexistent(self):
+    def test_set_nonexistent(self):
         property_key = 'testing'
-        property_value = True
-        event = Event('event name')
+        new_property_value = True
+        event = self.create_event()
 
         with self.assertRaises(KeyError):
-            event.set(property_key, property_value)
+            event.set(property_key, new_property_value)
 
-    def test_cancellable_cancelled(self):
-        event = Event('event name', cancellable=True)
 
-        event.cancelled = True
+class ReadOnlyEventTest(EventTest):
+    def setUp(self):
+        self.event_class = ReadOnlyEvent
 
-        self.assertTrue(event.cancelled)
-
-    def test_cancellable_cancel(self):
-        event = Event('event name', cancellable=True)
-
-        event.cancel()
-
-        self.assertTrue(event.cancelled)
-
-    def test_not_cancellable_cancelled(self):
-        event = Event('event name', cancellable=False)
-
-        with self.assertRaises(RuntimeError):
-            event.cancelled = True
-
-    def test_not_cancellable_cancel(self):
-        event = Event('event name', cancellable=False)
-
-        with self.assertRaises(RuntimeError):
-            event.cancel()
-
-    def test_cancelled(self):
-        event = Event('event name', cancellable=True)
-
-        event.cancelled = True
-
-        self.assertTrue(event.cancelled)
-
-    def test_cancel(self):
-        event = Event('event name', cancellable=True)
-
-        event.cancel()
-
-        self.assertTrue(event.cancelled)
-
-    def test_read_only_set(self):
+    def test_set(self):
         property_key = 'testing'
         property_value = True
         new_property_value = False
-        event = Event('event name', {property_key: property_value},
-                      read_only=True)
+        event = self.create_event({property_key: property_value})
 
         with self.assertRaises(RuntimeError):
             event.set(property_key, new_property_value)
 
-    def test_read_only_cancelled(self):
-        event = Event('event name', read_only=True)
-
-        with self.assertRaises(RuntimeError):
-            event.cancelled = True
-
-    def test_read_only_cancel(self):
-        event = Event('event name', read_only=True)
-
-        with self.assertRaises(RuntimeError):
-            event.cancel()
-
-    def test_monitor_set(self):
+    def test_set_nonexistent(self):
         property_key = 'testing'
-        property_value = True
-        new_property_value = False
-        event = Event('event name', {property_key: property_value},
-                      monitor=True)
+        new_property_value = True
+        event = self.create_event()
 
         with self.assertRaises(RuntimeError):
             event.set(property_key, new_property_value)
-
-    def test_monitor_cancelled(self):
-        event = Event('event name', monitor=True)
-
-        with self.assertRaises(RuntimeError):
-            event.cancelled = True
-
-    def test_monitor_cancel(self):
-        event = Event('event name', monitor=True)
-
-        with self.assertRaises(RuntimeError):
-            event.cancel()
-
-    def test_make_read_only(self):
-        event = Event('event name')
-
-        read_only_event = event.make_read_only()
-
-        self.assertFalse(event.read_only)
-        self.assertTrue(read_only_event.read_only)
-
-    def test_make_monitor(self):
-        event = Event('event name')
-
-        monitor_event = event.make_monitor()
-
-        self.assertFalse(event.monitor)
-        self.assertTrue(monitor_event.monitor)
