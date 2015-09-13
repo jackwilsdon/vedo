@@ -84,21 +84,23 @@ class EventEmitter(object):
         self._monitors = {}
         self._listeners = {}
 
-    def emit_event(self, event):
-        if event.name in self._monitors:
-            for monitor in self._monitors[event.name]:
-                monitor(event.make_monitor())
+    def _emit(self, listeners, event):
+        name = str(event.name)
 
-        if event.name in self._listeners:
-            for listener in self._listeners[event.name]:
+        if name in listeners:
+            for listener in listeners[name]:
                 listener(event)
+
+    def emit_event(self, event):
+        self._emit(self._monitors, event.make_monitor())
+        self._emit(self._listeners, event)
 
         return event
 
     def emit(self, name, properties={}, cancellable=False, read_only=False,
              monitor=False):
-        return self.emit_event(Event(name, properties, cancellable, read_only,
-                                     monitor))
+        return self.emit_event(Event(str(name), properties, cancellable,
+                                     read_only, monitor))
 
     def _check_func(self, func):
         argspec = inspect.getargspec(func)
@@ -113,20 +115,20 @@ class EventEmitter(object):
             raise TypeError('func {0} must accept 1 argument, not {1}'.format(
                             func.__name__, argcount))
 
+    def _listen(self, listeners, name, func):
+        self._check_func(func)
+
+        name = str(name)
+
+        if name not in listeners:
+            listeners[name] = []
+
+        listeners[name].append(func)
+
     def monitor(self, name, *funcs):
         for func in funcs:
-            self._check_func(func)
-
-            if name not in self._monitors:
-                self._monitors[name] = []
-
-            self._monitors[name].append(func)
+            self._listen(self._monitors, name, func)
 
     def on(self, name, *funcs):
         for func in funcs:
-            self._check_func(func)
-
-            if name not in self._listeners:
-                self._listeners[name] = []
-
-            self._listeners[name].append(func)
+            self._listen(self._listeners, name, func)
