@@ -4,6 +4,7 @@ from unittest import TestCase
 
 from vedo.event_emitter import Event, ReadOnlyEvent
 
+
 class BaseEventTest(TestCase):
     DEFAULT_EVENT_NAME = 'default event name'
 
