@@ -1,49 +1,15 @@
 from __future__ import absolute_import
 
 from unittest import TestCase
+import types
 
-from vedo.event_emitter import EventEmitter
-
-
-class ValueHolder(object):
-    def __init__(self, value=None, lock_on_value=False, lock_value=None,
-                 locked=False):
-        self._value = value
-        self._lock_on_value = lock_on_value
-        self._lock_value = lock_value
-        self._locked = locked
-
-    @property
-    def value(self):
-        return self._value
-
-    @property
-    def lock_on_value(self):
-        return self._lock_on_value
-
-    @property
-    def lock_value(self):
-        return self._lock_value
-
-    @property
-    def locked(self):
-        return self._locked
-
-    @value.setter
-    def value(self, value):
-        if not self.locked:
-            if self.lock_on_value and value == self.lock_value:
-                self._locked = True
-
-            self._value = value
-
-    def set(self, value):
-        self.value = value
+from vedo.test import ValueContainer
+from vedo.event_emitter import ReadOnlyEvent, EventEmitter
 
 
-class FalseLockValueHolder(ValueHolder):
+class FalseLockValueContainer(ValueContainer):
     def __init__(self, value=False):
-        super(FalseLockValueHolder, self).__init__(value, True, False)
+        super(FalseLockValueContainer, self).__init__(value, True, False)
 
 
 class EventEmitterTest(TestCase):
@@ -52,7 +18,7 @@ class EventEmitterTest(TestCase):
 
     def test_on(self):
         event_name = 'test event'
-        result = FalseLockValueHolder()
+        result = FalseLockValueContainer()
 
         self.event_emitter.on(event_name, lambda event: result.set(True))
         self.event_emitter.emit(event_name)
@@ -61,7 +27,7 @@ class EventEmitterTest(TestCase):
 
     def test_on_func_args(self):
         event_name = 'test event'
-        result = FalseLockValueHolder()
+        result = FalseLockValueContainer()
 
         def _not_enough_args():
             result.set(False)
@@ -86,7 +52,7 @@ class EventEmitterTest(TestCase):
 
     def test_on_bound_func(self):
         event_name = 'test event'
-        result = FalseLockValueHolder()
+        result = FalseLockValueContainer()
 
         def _not_enough_args(self):
             self.set(False)
@@ -98,11 +64,11 @@ class EventEmitterTest(TestCase):
             self.set(False)
 
         bound_not_enough_args = types.MethodType(_not_enough_args, result,
-                                                 FalseLockValueHolder)
+                                                 FalseLockValueContainer)
         bound_correct_args = types.MethodType(_correct_args, result,
-                                              FalseLockValueHolder)
+                                              FalseLockValueContainer)
         bound_too_many_args = types.MethodType(_too_many_args, result,
-                                               FalseLockValueHolder)
+                                               FalseLockValueContainer)
 
         with self.assertRaises(TypeError):
             self.event_emitter.on(event_name, bound_not_enough_args)
@@ -119,11 +85,10 @@ class EventEmitterTest(TestCase):
 
     def test_monitor(self):
         event_name = 'test event'
-        result = FalseLockValueHolder()
+        result = FalseLockValueContainer()
 
         def _check_monitor(event):
-            self.assertTrue(event.monitor)
-            result.set(True)
+            result.set(isinstance(event, ReadOnlyEvent))
 
         self.event_emitter.monitor(event_name, _check_monitor)
         self.event_emitter.emit(event_name)
@@ -132,7 +97,7 @@ class EventEmitterTest(TestCase):
 
     def test_event_name_objects(self):
         event_name = object()
-        result = FalseLockValueHolder()
+        result = FalseLockValueContainer()
 
         self.event_emitter.on(event_name, lambda event: result.set(True))
 
