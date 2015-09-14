@@ -2,15 +2,15 @@ from __future__ import absolute_import
 
 from collections import namedtuple
 
-from vedo.logger import DEFAULT_LEVEL, Message, Destination
+from vedo.logger import Destination
 
 
 NamedMessage = namedtuple('NamedMessage', ['name', 'message'])
 
 
 class ListDestination(Destination):
-    def __init__(self, level=DEFAULT_LEVEL):
-        super(ArrayDestination, self).__init__(level)
+    def __init__(self, *args, **kwargs):
+        super(ListDestination, self).__init__(*args, **kwargs)
 
         self._messages = []
 
