@@ -5,6 +5,7 @@ from unittest import TestCase
 from vedo.test import ClassTestCase
 from vedo.event_emitter import Event, ReadOnlyEvent
 
+
 class EventTest(ClassTestCase):
     def setUp(self):
         self.args = ['default event name']
@@ -54,10 +55,11 @@ class EventTest(ClassTestCase):
         with self.assertRaises(KeyError):
             event.set(property_key, new_property_value)
 
-"""
+
 class ReadOnlyEventTest(EventTest):
     def setUp(self):
-        self.event_class = ReadOnlyEvent
+        self.args = ['default event name']
+        self.test_class = ReadOnlyEvent
 
     def test_set(self):
         property_key = 'testing'
@@ -75,4 +77,3 @@ class ReadOnlyEventTest(EventTest):
 
         with self.assertRaises(RuntimeError):
             event.set(property_key, new_property_value)
-"""
