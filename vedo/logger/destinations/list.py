@@ -1,6 +1,11 @@
 from __future__ import absolute_import
 
+from collections import namedtuple
+
 from vedo.logger import DEFAULT_LEVEL, Message, Destination
+
+
+NamedMessage = namedtuple('NamedMessage', ['name', 'message'])
 
 
 class ListDestination(Destination):
@@ -14,4 +19,4 @@ class ListDestination(Destination):
         return [message for message in self._messages]
 
     def log(self, name, message):
-        self._messages.append(message)
+        self._messages.append(NamedMessage(name, message))
