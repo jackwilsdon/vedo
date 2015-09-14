@@ -3,12 +3,15 @@ from StringIO import StringIO
 
 
 class OutputRecorder(object):
-    def __init__(self):
+    def __init__(self, start=False):
         self._original_stdout = None
         self._original_stderr = None
 
         self._stdout_output = None
         self._stderr_output = None
+
+        if start:
+            self.start()
 
     @property
     def merge_stdout_stderr(self):
