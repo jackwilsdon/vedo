@@ -1,7 +1,5 @@
 from __future__ import absolute_import
 
-from unittest import TestCase
-
 from vedo.test import ClassTestCase
 from vedo.event_emitter import Event, ReadOnlyEvent
 
@@ -20,7 +18,9 @@ class EventTest(ClassTestCase):
     def test_get(self):
         property_key = 'testing'
         property_value = True
-        event = self.create_test_class(properties={property_key: property_value})
+        event = self.create_test_class(properties={
+            property_key: property_value
+        })
 
         self.assertEqual(event.get(property_key), property_value)
 
@@ -42,7 +42,9 @@ class EventTest(ClassTestCase):
         property_key = 'testing'
         property_value = True
         new_property_value = False
-        event = self.create_test_class(properties={property_key: property_value})
+        event = self.create_test_class(properties={
+            property_key: property_value
+        })
 
         event.set(property_key, new_property_value)
         self.assertEqual(event.get(property_key), new_property_value)
