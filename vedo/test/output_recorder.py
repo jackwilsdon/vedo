@@ -1,5 +1,5 @@
 import sys
-from StringsIO import StringIO
+from StringIO import StringIO
 
 
 class OutputRecorder(object):
