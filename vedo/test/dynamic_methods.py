@@ -22,5 +22,5 @@ def create_pass_method(name='pass_method', argc=0):
 
 def create_bound_pass_method(name='bound_pass_method', argc=0,
                              binding=object()):
-    method = create_pass_method(name, argc)
+    method = create_pass_method(name, argc + 1)
     return types.MethodType(method, binding, binding.__class__)
