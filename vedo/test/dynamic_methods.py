@@ -20,6 +20,7 @@ def create_pass_method(name='pass_method', argc=0):
     return context[name]
 
 
-def create_bound_pass_method(name='pass_method', argc=0, binding=object()):
+def create_bound_pass_method(name='bound_pass_method', argc=0,
+                             binding=object()):
     method = create_pass_method(name, argc)
     return types.MethodType(method, binding, binding.__class__)
