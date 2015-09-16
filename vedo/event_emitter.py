@@ -42,7 +42,6 @@ class ReadOnlyEvent(Event):
 
 class EventEmitter(object):
     def __init__(self):
-        self._monitors = {}
         self._listeners = {}
 
     def _check_func(self, func):
@@ -58,36 +57,50 @@ class EventEmitter(object):
             raise TypeError('func {0} must accept 1 argument, not {1}'.format(
                             func.__name__, argcount))
 
-    def _emit(self, listeners, event):
+    @property
+    def listeners(self):
+        return self._listeners
+
+    @property
+    def events(self):
+        return self.listeners.keys()
+
+    def emit(self, event):
+        if isinstance(event, str):
+            event = Event(event)
+
         name = str(event.name)
 
-        if name in listeners:
-            for listener in listeners[name]:
+        if name in self.listeners:
+            for listener in self.listeners[name]:
                 listener(event)
 
-    def _listen(self, listeners, name, func):
+        return event
+
+    def on(self, name, func):
         self._check_func(func)
 
         name = str(name)
 
-        if name not in listeners:
-            listeners[name] = []
+        if name not in self.listeners:
+            self.listeners[name] = []
 
-        listeners[name].append(func)
+        self.listeners[name].append(func)
 
-    def emit_event(self, event):
-        self._emit(self._monitors, ReadOnlyEvent(event.name, event.properties))
-        self._emit(self._listeners, event)
+    def off(self, name, func):
+        self._check_func(func)
 
-        return event
+        name = str(name)
 
-    def emit(self, *args, **kwargs):
-        return self.emit_event(Event(*args, **kwargs))
+        if name in self.listeners and func in self.listeners[name]:
+            if len(self.listeners[name]) <= 1:
+                del self.listeners[name]
+            else:
+                self.listeners[name].remove(func)
 
-    def monitor(self, name, *funcs):
-        for func in funcs:
-            self._listen(self._monitors, name, func)
+    def __contains__(self, value):
+        for name in self.listeners:
+            if value in self.listeners[name]:
+                return True
 
-    def on(self, name, *funcs):
-        for func in funcs:
-            self._listen(self._listeners, name, func)
+        return False
