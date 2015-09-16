@@ -2,8 +2,8 @@ from __future__ import absolute_import
 
 from nose.tools import raises
 
-from vedo.test import (ValueContainer, create_pass_method,
-                       create_bound_pass_method)
+from vedo.test import (ValueContainer, FalseLockValueContainer,
+                       create_pass_method, create_bound_pass_method)
 
 from vedo.event_emitter import Event, ReadOnlyEvent, EventEmitter
 
@@ -15,11 +15,6 @@ unbound_function_with_too_many_args = create_pass_method(argc=2)
 valid_bound_function = create_bound_pass_method(argc=1)
 bound_function_with_not_enough_args = create_bound_pass_method(argc=0)
 bound_function_with_too_many_args = create_bound_pass_method(argc=2)
-
-
-class FalseLockValueContainer(ValueContainer):
-    def __init__(self, value=False):
-        super(FalseLockValueContainer, self).__init__(value, True, False)
 
 
 class TestEvent(object):
