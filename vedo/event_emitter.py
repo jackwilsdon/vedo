@@ -5,6 +5,10 @@ _DEFAULT = object()
 
 class Event(object):
     def __init__(self, name, properties={}, *args, **kwargs):
+        if not isinstance(name, str):
+            raise TypeError('must be str, not {0}'
+                            .format(name.__class__.__name__))
+
         self._name = name
         self._properties = properties
 
