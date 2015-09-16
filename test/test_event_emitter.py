@@ -223,3 +223,7 @@ class TestEventEmitterEmit(object):
         self.event_emitter.emit(event)
 
         assert container.value == event
+
+    @raises(TypeError)
+    def test_raises_type_error_for_non_string_event_name_for_emit(self):
+        self.event_emitter.emit(object())
