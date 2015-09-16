@@ -1,10 +1,8 @@
 from __future__ import absolute_import, print_function
 
-from nose.tools import raises
-
 from vedo.test import OutputRecorder
 
-from vedo.logger import Level, Message, Destination, Logger
+from vedo.logger import Level, Message
 from vedo.logger.destinations import ConsoleDestination
 from vedo.logger.destinations.console import LEVEL_COLORS
 
