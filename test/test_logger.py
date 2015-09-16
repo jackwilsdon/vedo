@@ -119,3 +119,8 @@ class TestLogger(object):
             assert latest_message.message.format == 'message'
             assert latest_message.message.args == ['arg_first']
             assert latest_message.message.kwargs == {'second': 'arg_second'}
+
+    @raises(AttributeError)
+    def test_raises_attribute_error_for_invalid_attribute(self):
+        logger = Logger('logger')
+        getattr(logger, 'invalid_attribute')
