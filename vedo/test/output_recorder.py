@@ -26,6 +26,7 @@ class StreamSwapWrapper(object):
         sys.stdout = self._original_stdout
         sys.stderr = self._original_stderr
 
+
 class OutputRecorder(object):
     def __init__(self, start=False, isatty=False):
         self._original_stdout = None
