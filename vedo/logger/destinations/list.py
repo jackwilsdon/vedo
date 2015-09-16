@@ -27,6 +27,3 @@ class ListDestination(Destination):
 
     def log(self, name, message):
         self._messages.append(NamedMessage(name, message))
-
-    def __contains__(self, value):
-        return value in self.messages
