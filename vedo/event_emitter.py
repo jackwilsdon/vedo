@@ -22,6 +22,7 @@ def _validate_function(func):
         raise TypeError('func {0} must accept 1 argument, not {1}'.format(
                         func.__name__, argcount))
 
+
 class Event(object):
     def __init__(self, name, properties={}):
         _validate_event_name(name)
