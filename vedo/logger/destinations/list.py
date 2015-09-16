@@ -18,6 +18,13 @@ class ListDestination(Destination):
     def messages(self):
         return [message for message in self._messages]
 
+    @property
+    def latest_message(self):
+        if len(self.messages) == 0:
+            return None
+
+        return self.messages[-1]
+
     def log(self, name, message):
         self._messages.append(NamedMessage(name, message))
 
