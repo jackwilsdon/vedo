@@ -101,3 +101,6 @@ class Logger(EventEmitter):
         else:
             raise AttributeError('\'{0}\' object has no attribute \'{1}\''
                                  .format(self.__class__.__name__, name))
+
+    def __contains__(self, value):
+        return value in self._destinations
