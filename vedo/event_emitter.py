@@ -1,13 +1,23 @@
+import re
 import inspect
 
 _DEFAULT = object()
+EVENT_NAME_EXPRESSION = re.compile('^[A-Z_]+$', re.IGNORECASE)
+
+
+def _validate_event_name(name):
+    if not isinstance(name, str):
+        raise TypeError('name must be str, not {0}'
+                        .format(name.__class__.__name__))
+
+    if not EVENT_NAME_EXPRESSION.match(name):
+        raise TypeError('name must match {0}'
+                        .format(EVENT_NAME_EXPRESSION.pattern))
 
 
 class Event(object):
     def __init__(self, name, properties={}, *args, **kwargs):
-        if not isinstance(name, str):
-            raise TypeError('must be str, not {0}'
-                            .format(name.__class__.__name__))
+        _validate_event_name(name)
 
         self._name = name
         self._properties = properties
@@ -48,11 +58,6 @@ class EventEmitter(object):
     def __init__(self):
         self._listeners = {}
 
-    def _check_name(self, name):
-        if not isinstance(name, str):
-            raise TypeError('must be str, not {0}'
-                            .format(name.__class__.__name__))
-
     def _check_func(self, func):
         argspec = inspect.getargspec(func)
         argcount = len(argspec.args)
@@ -87,7 +92,7 @@ class EventEmitter(object):
         return event
 
     def on(self, name, func):
-        self._check_name(name)
+        _validate_event_name(name)
         self._check_func(func)
 
         if name not in self.listeners:
@@ -96,7 +101,7 @@ class EventEmitter(object):
         self.listeners[name].append(func)
 
     def off(self, name, func):
-        self._check_name(name)
+        _validate_event_name(name)
         self._check_func(func)
 
         if name in self.listeners and func in self.listeners[name]:
