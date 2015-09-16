@@ -78,10 +78,8 @@ class EventEmitter(object):
         if not isinstance(event, Event):
             event = Event(event)
 
-        name = str(event.name)
-
-        if name in self.listeners:
-            for listener in self.listeners[name]:
+        if event.name in self.listeners:
+            for listener in self.listeners[event.name]:
                 listener(event)
 
         return event
