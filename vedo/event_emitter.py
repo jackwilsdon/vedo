@@ -11,7 +11,7 @@ def _validate_event_name(name):
 
 
 class Event(object):
-    def __init__(self, name, properties={}, *args, **kwargs):
+    def __init__(self, name, properties={}):
         _validate_event_name(name)
 
         self._name = name
@@ -45,7 +45,7 @@ class ReadOnlyEvent(Event):
     def __init__(self, *args, **kwargs):
         super(ReadOnlyEvent, self).__init__(*args, **kwargs)
 
-    def set(self, *args, **kwargs):
+    def set(self, key, value):
         raise RuntimeError('event is read only')
 
 
