@@ -2,17 +2,12 @@ import re
 import inspect
 
 _DEFAULT = object()
-EVENT_NAME_EXPRESSION = re.compile('^[A-Z_]+$', re.IGNORECASE)
 
 
 def _validate_event_name(name):
     if not isinstance(name, str):
         raise TypeError('name must be str, not {0}'
                         .format(name.__class__.__name__))
-
-    if not EVENT_NAME_EXPRESSION.match(name):
-        raise TypeError('name must match {0}'
-                        .format(EVENT_NAME_EXPRESSION.pattern))
 
 
 class Event(object):
