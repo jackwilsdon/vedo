@@ -48,6 +48,11 @@ class EventEmitter(object):
     def __init__(self):
         self._listeners = {}
 
+    def _check_name(self, name):
+        if not isinstance(name, str):
+            raise TypeError('must be str, not {0}'
+                            .format(name.__class__.__name__))
+
     def _check_func(self, func):
         argspec = inspect.getargspec(func)
         argcount = len(argspec.args)
@@ -82,9 +87,8 @@ class EventEmitter(object):
         return event
 
     def on(self, name, func):
+        self._check_name(name)
         self._check_func(func)
-
-        name = str(name)
 
         if name not in self.listeners:
             self.listeners[name] = []
@@ -92,9 +96,8 @@ class EventEmitter(object):
         self.listeners[name].append(func)
 
     def off(self, name, func):
+        self._check_name(name)
         self._check_func(func)
-
-        name = str(name)
 
         if name in self.listeners and func in self.listeners[name]:
             if len(self.listeners[name]) <= 1:
