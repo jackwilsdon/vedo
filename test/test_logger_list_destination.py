@@ -1,8 +1,6 @@
 from __future__ import absolute_import
 
-from nose.tools import raises
-
-from vedo.logger import Level, Message, Destination, Logger
+from vedo.logger import Level, Message
 from vedo.logger.destinations import ListDestination
 
 
