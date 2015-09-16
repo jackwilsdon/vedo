@@ -66,7 +66,7 @@ class EventEmitter(object):
         return self.listeners.keys()
 
     def emit(self, event):
-        if isinstance(event, str):
+        if not isinstance(event, Event):
             event = Event(event)
 
         name = str(event.name)
