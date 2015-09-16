@@ -83,6 +83,7 @@ class TestLogger(object):
         logger = Logger('logger', list_destination)
 
         logger.log_message(message)
+
         assert list_destination.latest_message.message == message
 
     def test_logs_message_instance_for_log(self):
