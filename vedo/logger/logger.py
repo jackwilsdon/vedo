@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 
 from enum import Enum
-from vedo.event_emitter import EventEmitter
+from vedo.event_emitter import Event, EventEmitter
 
 
 class Level(Enum):
@@ -77,7 +77,10 @@ class Logger(EventEmitter):
             if destination.should_log(self.name, message):
                 destination.log(self.name, message)
 
-        self.emit(message.level.name, {'name': self.name, 'message': message})
+        event = Event(message.level.name,
+                      {'name': self.name, 'message': message})
+
+        self.emit(event)
 
     def log(self, level, format, *args, **kwargs):
         return self.log_message(Message(level, format, *args, **kwargs))
