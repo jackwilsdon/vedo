@@ -1,4 +1,3 @@
-import re
 import inspect
 
 _DEFAULT = object()
