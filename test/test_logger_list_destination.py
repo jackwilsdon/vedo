@@ -50,6 +50,10 @@ class TestListDestination(object):
 
         assert list_destination.latest_message.message == second_message
 
+    def test_latest_message_is_none_without_log(self):
+        list_destination = ListDestination(Level.debug)
+        assert list_destination.latest_message is None
+
     def test_adds_message_to_messages_for_log(self):
         message = Message(Level.debug, 'message')
         list_destination = ListDestination()
