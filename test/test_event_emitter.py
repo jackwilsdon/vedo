@@ -2,8 +2,8 @@ from __future__ import absolute_import
 
 from nose.tools import raises
 
-from vedo.util import (ValueContainer, FalseLockValueContainer,
-                       create_pass_method, create_bound_pass_method)
+from vedo.util import (ValueContainer, create_pass_method,
+                       create_bound_pass_method)
 
 from vedo.event_emitter import Event, ReadOnlyEvent, EventEmitter
 
@@ -196,7 +196,7 @@ class TestEventEmitterEmit(object):
         self.event_emitter = EventEmitter()
 
     def test_single_listener_called_for_emit(self):
-        container = FalseLockValueContainer()
+        container = ValueContainer(False, False)
 
         self.event_emitter.on('event', lambda event: container.set(True))
         self.event_emitter.emit('event')
@@ -204,7 +204,8 @@ class TestEventEmitterEmit(object):
         assert container.value
 
     def test_multiple_listeners_called_for_emit(self):
-        containers = [FalseLockValueContainer(), FalseLockValueContainer()]
+        containers = [ValueContainer(False, False),
+                      ValueContainer(False, False)]
 
         self.event_emitter.on('event',
                               lambda event: containers[0].set(True))

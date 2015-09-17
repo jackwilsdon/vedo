@@ -45,8 +45,3 @@ class ValueContainer(object):
 
     def set(self, value):
         self.value = value
-
-
-class FalseLockValueContainer(ValueContainer):
-    def __init__(self, value=False):
-        super(FalseLockValueContainer, self).__init__(value, False, False)
