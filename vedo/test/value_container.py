@@ -1,21 +1,17 @@
 class ValueContainer(object):
+    DEFAULT = object()
+
     """A lockable container for a single value of any type.
 
     The value of a locked container cannot be changed.
     """
 
-    def __init__(self, value=None, lock_on_value=False, lock_value=None,
-                 locked=False):
+    def __init__(self, value=None, lock_trigger=DEFAULT, locked=False):
         """Configures the container with a value and lock options.
 
         Args:
             value: The initial value for the container.
-            lock_on_value (bool): Lock the container when the value is equal to
-                `lock_value`. If the initial value is equal to `lock_value`,
-                the container is not locked automatically upon creation and can
-                only be locked if the value of the container changes to match
-                the lock value.
-            lock_value (bool): The value to compare against when deciding
+            lock_trigger: The value to compare against when deciding
                 whether or not to lock the container. If the value being
                 compared against this is the same, then the container is
                 locked.
@@ -24,8 +20,7 @@ class ValueContainer(object):
         """
 
         self._value = value
-        self._lock_on_value = lock_on_value
-        self._lock_value = lock_value
+        self._lock_trigger = lock_trigger
         self._locked = locked
 
     @property
@@ -33,12 +28,8 @@ class ValueContainer(object):
         return self._value
 
     @property
-    def lock_on_value(self):
-        return self._lock_on_value
-
-    @property
-    def lock_value(self):
-        return self._lock_value
+    def lock_trigger(self):
+        return self._lock_trigger
 
     @property
     def locked(self):
@@ -47,7 +38,7 @@ class ValueContainer(object):
     @value.setter
     def value(self, value):
         if not self.locked:
-            if self.lock_on_value and value == self.lock_value:
+            if value == self.lock_trigger:
                 self._locked = True
 
             self._value = value
@@ -58,4 +49,4 @@ class ValueContainer(object):
 
 class FalseLockValueContainer(ValueContainer):
     def __init__(self, value=False):
-        super(FalseLockValueContainer, self).__init__(value, True, False)
+        super(FalseLockValueContainer, self).__init__(value, False, False)
