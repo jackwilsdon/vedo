@@ -66,20 +66,12 @@ class EventEmitter(object):
     def __init__(self):
         self._listeners = {}
 
-    @property
-    def listeners(self):
-        return self._listeners
-
-    @property
-    def events(self):
-        return self.listeners.keys()
-
     def emit(self, event):
         if not isinstance(event, Event):
             event = Event(event)
 
-        if event.name in self.listeners:
-            for listener in self.listeners[event.name]:
+        if event.name in self._listeners:
+            for listener in self._listeners[event.name]:
                 listener(event)
 
         return event
@@ -88,24 +80,24 @@ class EventEmitter(object):
         _validate_event_name(name)
         _validate_function(func)
 
-        if name not in self.listeners:
-            self.listeners[name] = []
+        if name not in self._listeners:
+            self._listeners[name] = []
 
-        self.listeners[name].append(func)
+        self._listeners[name].append(func)
 
     def off(self, name, func):
         _validate_event_name(name)
         _validate_function(func)
 
-        if name in self.listeners and func in self.listeners[name]:
-            if len(self.listeners[name]) <= 1:
-                del self.listeners[name]
+        if name in self._listeners and func in self._listeners[name]:
+            if len(self._listeners[name]) <= 1:
+                del self._listeners[name]
             else:
-                self.listeners[name].remove(func)
+                self._listeners[name].remove(func)
 
     def __contains__(self, value):
-        for name in self.listeners:
-            if value in self.listeners[name]:
+        for name in self._listeners:
+            if value in self._listeners[name]:
                 return True
 
         return False
