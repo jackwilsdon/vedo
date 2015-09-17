@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function
 
 import inspect
 
-from vedo.test import create_pass_method, create_bound_pass_method
+from vedo.util import create_pass_method, create_bound_pass_method
 
 
 class TestDynamicMethods(object):

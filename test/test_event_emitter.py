@@ -2,7 +2,7 @@ from __future__ import absolute_import
 
 from nose.tools import raises
 
-from vedo.test import (ValueContainer, FalseLockValueContainer,
+from vedo.util import (ValueContainer, FalseLockValueContainer,
                        create_pass_method, create_bound_pass_method)
 
 from vedo.event_emitter import Event, ReadOnlyEvent, EventEmitter

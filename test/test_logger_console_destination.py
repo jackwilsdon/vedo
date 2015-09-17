@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function
 
 from colorama import Fore
 
-from vedo.test import OutputRecorder
+from vedo.util import OutputRecorder
 
 from vedo.logger import Level, Message
 from vedo.logger.destinations import ConsoleDestination
