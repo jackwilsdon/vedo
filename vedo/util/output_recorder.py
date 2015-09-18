@@ -43,6 +43,10 @@ class OutputRecorder(object):
 
     @property
     def original_streams(self):
+        if not self.active:
+            return StreamSwapWrapper(sys.stdout, sys.stderr, sys.stdout,
+                                     sys.stderr)
+
         return StreamSwapWrapper(self._replacement_stdout,
                                  self._replacement_stderr,
                                  self._original_stdout, self._original_stderr)
