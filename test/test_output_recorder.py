@@ -16,7 +16,6 @@ class TestOutputRecorder(object):
         self.recorder = OutputRecorder()
         assert not self.recorder.active
 
-
     def test_starts_for_start_true_in_constructor(self):
         self.recorder = OutputRecorder(True)
         assert self.recorder.active
@@ -71,7 +70,6 @@ class TestOutputRecorder(object):
         print('text')
 
         assert self.recorder.stdout == 'text\n'
-
 
     def test_stderr_contains_stderr_value_for_print_in_active_recorder(self):
         self.recorder = OutputRecorder(True)
