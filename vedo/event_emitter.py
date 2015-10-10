@@ -42,16 +42,16 @@ class Event(object):
         if key not in self and default == _DEFAULT:
             raise KeyError(key)
 
-        return self._properties[key] if key in self else default
+        return self.properties[key] if key in self else default
 
     def set(self, key, value):
         if key not in self:
             raise KeyError(key)
 
-        self._properties[key] = value
+        self.properties[key] = value
 
     def __contains__(self, key):
-        return key in self._properties
+        return key in self.properties
 
 
 class ReadOnlyEvent(Event):

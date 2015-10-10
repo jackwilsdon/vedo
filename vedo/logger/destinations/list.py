@@ -26,4 +26,4 @@ class ListDestination(Destination):
         return self.messages[-1]
 
     def log(self, name, message):
-        self._messages.append(NamedMessage(name, message))
+        self.messages.append(NamedMessage(name, message))
